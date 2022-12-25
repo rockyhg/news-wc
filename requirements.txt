@@ -1,0 +1,14 @@
+flake8
+black
+isort
+janome
+wordcloud
+pandas
+schedule
+requests
+beautifulsoup4
+certifi
+scikit-learn
+Pillow
+flask
+sqlalchemy
