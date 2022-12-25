@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=['GET'])
 def index():
-    NewsWordcloud()
+    # NewsWordcloud()
     date_list = get_date_list()
     return render_template("index.html", date_list=date_list)
 
