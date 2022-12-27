@@ -1,7 +1,7 @@
 from flask import Flask, render_template  # , request
 
-from models.models import get_date_list
-from news_wc import NewsWordcloud
+# from models.models import get_date_list
+# from news_wc import NewsWordcloud
 
 
 app = Flask(__name__)
