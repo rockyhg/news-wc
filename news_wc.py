@@ -93,5 +93,5 @@ class NewsWordcloud:
 
 if __name__ == "__main__":
     news_wc = NewsWordcloud(file_save=True)
-    img_data = news_wc.to_base64()
-    print(img_data)
+    # img_data = news_wc.to_base64()
+    # print(img_data)
