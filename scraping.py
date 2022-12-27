@@ -1,11 +1,8 @@
 import os
 from datetime import date, datetime
-# from pprint import pprint
-# from time import sleep
 
 import pandas as pd
 import requests
-import schedule
 from bs4 import BeautifulSoup
 from janome.analyzer import Analyzer
 from janome.tokenfilter import CompoundNounFilter, POSKeepFilter, POSStopFilter
@@ -285,9 +282,6 @@ def main():
     JijiNews().fetch_news()
     MainichiNews().fetch_news()
     print("End")
-
-
-schedule.every(15).minutes.do(main)
 
 
 if __name__ == "__main__":
