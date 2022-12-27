@@ -7,12 +7,14 @@ from news_wc import NewsWordcloud
 app = Flask(__name__)
 
 
-@app.route("/", methods=["GET"])
+@app.route("/")
 def index():
-    news_wc = NewsWordcloud()
-    wc_img_data = news_wc.to_base64()
-    date_list = get_date_list()
-    return render_template("index.html", todays_wc=wc_img_data, date_list=date_list)
+    # news_wc = NewsWordcloud()
+    # wc_img_data = news_wc.to_base64()
+    # date_list = get_date_list()
+    # return render_template("index.html", todays_wc=wc_img_data, date_list=date_list)
+    # return render_template("index.html")
+    return 'Hello World!'
 
 
 # @app.route("/", methods=["POST"])
