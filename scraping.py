@@ -34,7 +34,7 @@ class News:
         self.file_name = ""
         self.df_news = pd.DataFrame()
 
-    def fetch_news(self):
+    def fetch_news(self, file_save: bool = True):
         """Webページからニュース一覧を取得する"""
         headers = {"UserAgent": USER_AGENT}
         res = requests.get(self.url, headers=headers, timeout=(3.0, 7.5))
@@ -46,7 +46,8 @@ class News:
             return
         self._parse_html(res.text)
         self._tokenize()
-        self._store_news()
+        if file_save:
+            self._store_news()
 
     def _parse_html(self, text: str) -> None:
         """HTMLからニュース情報を取得し、self.df_news を更新する（Mediaごとにオーバーライドする）"""

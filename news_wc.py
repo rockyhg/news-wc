@@ -26,8 +26,11 @@ class NewsWordcloud:
         ニュースの単語（スペース区切り）
     date_str: str
         ニュースの日付 (YYYY-MM-DD) -> ファイル名"""
+
     # def __init__(self, date_str: str = None, file_save: bool = False) -> None:
-    def __init__(self, news_words: str, date_str: str = None, file_save: bool = True) -> None:
+    def __init__(
+        self, news_words: str, date_str: str = None, file_save: bool = True
+    ) -> None:
         if not date_str:
             date_str = date.today().strftime("%Y-%m-%d")
         self.save_path = os.path.join(WC_DIR, f"wc_{date_str}.png")
@@ -71,15 +74,15 @@ class NewsWordcloud:
             os.remove(self.save_path)
 
     def to_base64(self) -> str:
-        '''WordCloud画像をHTML埋め込み用に変換する'''
+        """WordCloud画像をHTML埋め込み用に変換する"""
         buf = BytesIO()
-        self.wc_img.save(buf, 'png')
+        self.wc_img.save(buf, "png")
         base64_str = base64.b64encode(buf.getvalue()).decode("utf-8")
         base64_data = f"data:image/png;base64,{base64_str}"
         return base64_data
 
 
-def get_news_words(date_str: str = None) -> str:
+def get_words_from_csv(date_str: str = None) -> str:
     """DBから news_words を取得
     date_str: str
         ニュースの日付 (YYYY-MM-DD)"""
@@ -96,8 +99,60 @@ def get_news_words(date_str: str = None) -> str:
     return " ".join(words_list)
 
 
+def get_words_by_crawling() -> str:
+    from scraping import (
+        YahooNews,
+        GooNews,
+        DmenuNews,
+        ExciteNews,
+        NikkeiNews,
+        JijiNews,
+        MainichiNews,
+    )
+
+    words_list = []
+
+    yahoo = YahooNews()
+    yahoo.fetch_news(file_save=False)
+    words = yahoo.df_news["words"].to_list()
+    words_list.append(" ".join(words))
+
+    goo = GooNews()
+    goo.fetch_news(file_save=False)
+    words = goo.df_news["words"].to_list()
+    words_list.append(" ".join(words))
+
+    dmenu = DmenuNews()
+    dmenu.fetch_news(file_save=False)
+    words = dmenu.df_news["words"].to_list()
+    words_list.append(" ".join(words))
+
+    excite = ExciteNews()
+    excite.fetch_news(file_save=False)
+    words = excite.df_news["words"].to_list()
+    words_list.append(" ".join(words))
+
+    nikkei = NikkeiNews()
+    nikkei.fetch_news(file_save=False)
+    words = nikkei.df_news["words"].to_list()
+    words_list.append(" ".join(words))
+
+    jiji = JijiNews()
+    jiji.fetch_news(file_save=False)
+    words = jiji.df_news["words"].to_list()
+    words_list.append(" ".join(words))
+
+    mai = MainichiNews()
+    mai.fetch_news(file_save=False)
+    words = mai.df_news["words"].to_list()
+    words_list.append(" ".join(words))
+
+    return " ".join(words_list)
+
+
 if __name__ == "__main__":
-    words = get_news_words()
+    words = get_words_by_crawling()
+    # print(words)
     news_wc = NewsWordcloud(words, file_save=True)
-    # img_data = news_wc.to_base64()
+    img_data = news_wc.to_base64()
     # print(img_data)
