@@ -1,17 +1,19 @@
+import base64
 import os
 import random
 from datetime import date
 from glob import glob
+from io import BytesIO
 
-import matplotlib
-import matplotlib.pyplot as plt
+# import matplotlib
+# import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from PIL import Image
 from sklearn.feature_extraction.text import TfidfVectorizer
 from wordcloud import WordCloud
 
-matplotlib.use("agg")
+# matplotlib.use("agg")
 
 NEWS_DIR = "./models/news"
 FONT_PATH = "./static/fonts/NotoSansJP-Bold.otf"
@@ -22,10 +24,10 @@ PAST_WC_PATH = "./static/images/past_wc.png"
 
 
 class NewsWordcloud:
-    def __init__(self, date_str: str = None) -> None:
-        """ワードクラウドを生成し、画像ファイルに保存する
-        news_date: str
-            ニュースの日付 ("yyyy-mm-dd")"""
+    """ワードクラウドを生成し、画像ファイルに保存する
+    news_date: str
+        ニュースの日付 ("yyyy-mm-dd")"""
+    def __init__(self, date_str: str = None, file_save: bool = False) -> None:
         if date_str:
             self.date_str = date_str
             self.save_path = PAST_WC_PATH
@@ -44,7 +46,7 @@ class NewsWordcloud:
         _stop_words = []
         _mask = np.array(Image.open(MASK_PATH))
 
-        wordcloud = WordCloud(
+        wc = WordCloud(
             font_path=FONT_PATH,
             # width=1600,
             # height=900,
@@ -58,8 +60,10 @@ class NewsWordcloud:
             mask=_mask,
         ).generate_from_frequencies(tfidf_dict)
 
-        self._clean_cache()
-        wordcloud.to_file(self.save_path)
+        self.wc_img = wc.to_image()
+        if file_save:
+            self._clean_cache()
+            wc.to_file(self.save_path)
 
     def _set_news_words(self) -> str:
         """DBから news_words を取得"""
@@ -81,9 +85,17 @@ class NewsWordcloud:
         """前に保存した画像を削除する"""
         if os.path.exists(self.save_path):
             os.remove(self.save_path)
-        # print('cleaned')
+
+    def to_base64(self) -> str:
+        '''WordCloud画像をHTML埋め込み用に変換する'''
+        buf = BytesIO()
+        self.wc_img.save(buf, 'png')
+        base64_str = base64.b64encode(buf.getvalue()).decode("utf-8")
+        base64_data = f"data:image/png;base64,{base64_str}"
+        return base64_data
 
 
 if __name__ == "__main__":
-    NewsWordcloud()
-    print('Saved word cloud!')
+    news_wc = NewsWordcloud(file_save=True)
+    img_data = news_wc.to_base64()
+    print(img_data)
