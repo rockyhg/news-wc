@@ -5,15 +5,11 @@ from datetime import date
 from glob import glob
 from io import BytesIO
 
-# import matplotlib
-# import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from PIL import Image
 from sklearn.feature_extraction.text import TfidfVectorizer
 from wordcloud import WordCloud
-
-# matplotlib.use("agg")
 
 NEWS_DIR = "./models/news"
 FONT_PATH = "./static/fonts/NotoSansJP-Bold.otf"
