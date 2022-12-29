@@ -1,24 +1,38 @@
-from datetime import date as dt
-import os
-import re
+# coding: utf-8
+from datetime import datetime as dt
 
-NEWS_DIR = os.path.join(os.path.dirname(__file__), "news")
+from sqlalchemy import Column, Date, DateTime, Integer, String, Text
 
-
-def get_date_list() -> list:
-    dir_list = os.listdir(NEWS_DIR)
-    date_pattern = re.compile(r"^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
-    for dir in dir_list:
-        if date_pattern.fullmatch(dir) is None:
-            dir_list.remove(dir)
-        if dir == dt.today().strftime("%Y-%m-%d"):
-            dir_list.remove(dir)
-    dir_list = sorted(dir_list, reverse=True)
-    return dir_list
+from models.database import Base
 
 
-if __name__ == "__main__":
-    date_list = get_date_list()
-    print(date_list)
-    for i, date in enumerate(date_list, 1):
-        print(f'<option value="{i}">{date}</option>')
+class News(Base):
+    __tablename__ = "news"
+
+    # Columns
+    id = Column(Integer, primary_key=True)
+    media = Column(String(128), unique=False)
+    date = Column(Date, unique=False)
+    ranking = Column(Integer, unique=False)
+    title = Column(Text, unique=False)
+    url = Column(String(256), unique=False)
+    words = Column(Text, unique=False)
+    timestamp = Column(DateTime, default=dt.now())
+
+    def __init__(
+        self,
+        media=None,
+        date=None,
+        ranking=None,
+        title=None,
+        url=None,
+        words=None,
+        timestamp=None,
+    ):
+        self.media = media
+        self.date = date
+        self.ranking = ranking
+        self.title = title
+        self.url = url
+        self.words = words
+        self.timestamp = timestamp
