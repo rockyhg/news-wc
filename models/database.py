@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 databese_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "news.sqlite")
-engine = create_engine("sqlite:///" + databese_file, convert_unicode=True, echo=True)
+engine = create_engine("sqlite:///" + databese_file, convert_unicode=True, echo=False)
 db_session = scoped_session(
     sessionmaker(autocommit=False, autoflush=False, bind=engine)
 )

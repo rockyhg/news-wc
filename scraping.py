@@ -8,8 +8,9 @@ from janome.analyzer import Analyzer
 from janome.tokenfilter import CompoundNounFilter, POSKeepFilter, POSStopFilter
 from requests.exceptions import RequestException
 
-# NEWS_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "models/news")
-NEWS_DIR = "./models/news"
+from models.database import db_session
+from models.models import News
+
 URL = {
     "yahoo": "https://news.yahoo.co.jp/ranking/access/news/domestic",
     "goo": "https://news.goo.ne.jp/ranking/nation/",
@@ -19,19 +20,20 @@ URL = {
     "mainichi": "https://mainichi.jp/ranking/",
     "nikkei": "https://www.nikkei.com/access/index/?bd=hKijiSougou",
 }
+
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) \
 Chrome/108.0.0.0 Safari/537.36"
 
 
-class News:
+class Scraper:
     def __init__(self) -> None:
         self.media = ""
         self.url = ""
-        self.dir = f"{NEWS_DIR}/{date.today().strftime('%Y-%m-%d')}"
+        # self.dir = f"{NEWS_DIR}/{date.today().strftime('%Y-%m-%d')}"
         self.file_name = ""
         self.df_news = pd.DataFrame()
 
-    def fetch_news(self, file_save: bool = True):
+    def fetch_news(self) -> None:
         """Webページからニュース一覧を取得する"""
         headers = {"UserAgent": USER_AGENT}
         res = requests.get(self.url, headers=headers, timeout=(3.0, 7.5))
@@ -43,8 +45,7 @@ class News:
             return
         self._parse_html(res.text)
         self._tokenize()
-        if file_save:
-            self._store_news()
+        self._store_news()
 
     def _parse_html(self, text: str) -> None:
         """HTMLからニュース情報を取得し、self.df_news を更新する（Mediaごとにオーバーライドする）"""
@@ -69,13 +70,34 @@ class News:
         self.df_news["words"] = words_wakati
 
     def _store_news(self) -> None:
-        # TODO: Database
-        os.makedirs(self.dir, exist_ok=True)
-        with open(os.path.join(self.dir, self.file_name), "w") as f:
-            self.df_news.to_csv(f, index=False)
+        '''DBに保存'''
+        for _, _df in self.df_news.iterrows():
+            row = db_session.query(News).filter_by(
+                media=_df['media'],
+                date=_df['date'],
+                ranking=_df['ranking']
+            ).first()
+            if row:
+                # Update row
+                row.title = _df['title']
+                row.url = _df['url']
+                row.words = _df['words']
+                row.timestamp = datetime.now()
+            else:
+                # Create row
+                row = News(
+                    media=_df['media'],
+                    date=datetime.strptime(_df['date'], '%Y-%m-%d'),
+                    ranking=_df['ranking'],
+                    title=_df['title'],
+                    url=_df['url'],
+                    words=_df['words']
+                )
+            db_session.add(row)
+        db_session.commit()
 
 
-class YahooNews(News):
+class YahooScraper(Scraper):
     def __init__(self) -> None:
         super().__init__()
         self.media = "yahoo"
@@ -103,7 +125,7 @@ class YahooNews(News):
         self.df_news = pd.DataFrame(news)
 
 
-class GooNews(News):
+class GooScraper(Scraper):
     def __init__(self) -> None:
         super().__init__()
         self.media = "goo"
@@ -131,7 +153,7 @@ class GooNews(News):
         self.df_news = pd.DataFrame(news)
 
 
-class DmenuNews(News):
+class DmenuScraper(Scraper):
     def __init__(self) -> None:
         super().__init__()
         self.media = "dmenu"
@@ -159,7 +181,7 @@ class DmenuNews(News):
         self.df_news = pd.DataFrame(news)
 
 
-class ExciteNews(News):
+class ExciteScraper(Scraper):
     def __init__(self) -> None:
         super().__init__()
         self.media = "excite"
@@ -185,7 +207,7 @@ class ExciteNews(News):
         self.df_news = pd.DataFrame(news)
 
 
-class NikkeiNews(News):
+class NikkeiScraper(Scraper):
     def __init__(self) -> None:
         super().__init__()
         self.media = "nikkei"
@@ -212,7 +234,7 @@ class NikkeiNews(News):
         self.df_news = pd.DataFrame(news)
 
 
-class JijiNews(News):
+class JijiScraper(Scraper):
     def __init__(self) -> None:
         super().__init__()
         self.media = "jiji"
@@ -245,7 +267,7 @@ class JijiNews(News):
         self.df_news = pd.DataFrame(news)
 
 
-class MainichiNews(News):
+class MainichiScraper(Scraper):
     def __init__(self) -> None:
         super().__init__()
         self.media = "mainichi"
@@ -274,18 +296,15 @@ class MainichiNews(News):
 def main():
     print("------------------------------------")
     print(f"Crawl at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    YahooNews().fetch_news()
-    GooNews().fetch_news()
-    DmenuNews().fetch_news()
-    ExciteNews().fetch_news()
-    NikkeiNews().fetch_news()
-    JijiNews().fetch_news()
-    MainichiNews().fetch_news()
+    YahooScraper().fetch_news()
+    GooScraper().fetch_news()
+    DmenuScraper().fetch_news()
+    ExciteScraper().fetch_news()
+    NikkeiScraper().fetch_news()
+    JijiScraper().fetch_news()
+    MainichiScraper().fetch_news()
     print("End")
 
 
 if __name__ == "__main__":
     main()
-    # while True:
-    #     schedule.run_pending()
-    #     sleep(1)
