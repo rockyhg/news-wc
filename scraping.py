@@ -87,7 +87,7 @@ class Scraper:
                 # Create row
                 row = News(
                     media=_df['media'],
-                    date=datetime.strptime(_df['date'], '%Y-%m-%d'),
+                    date=_df['date'],
                     ranking=_df['ranking'],
                     title=_df['title'],
                     url=_df['url'],
