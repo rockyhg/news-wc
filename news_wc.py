@@ -1,5 +1,4 @@
 import base64
-import os
 import random
 from datetime import date, datetime
 from io import BytesIO
@@ -108,5 +107,5 @@ def get_words_from_db(date_str: str = None) -> str:
 if __name__ == "__main__":
     words = get_words_from_db()
     news_wc = NewsWordcloud(words, file_save=True)
-    from pprint import pprint
-    pprint(news_wc.high_rank_news)
+    # from pprint import pprint
+    # pprint(news_wc.high_rank_news)

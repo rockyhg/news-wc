@@ -28,7 +28,6 @@ class Scraper:
     def __init__(self) -> None:
         self.media = ""
         self.url = ""
-        # self.dir = f"{NEWS_DIR}/{date.today().strftime('%Y-%m-%d')}"
         self.file_name = ""
         self.df_news = pd.DataFrame()
 
@@ -40,7 +39,6 @@ class Scraper:
             res.raise_for_status()
         except RequestException as e:
             print(e)
-            # TODO: logger.exception("request failed. error=(%s)", e.response.text)
             return
         self._parse_html(res.text)
         self._tokenize()
