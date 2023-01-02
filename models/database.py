@@ -7,7 +7,8 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 databese_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "news.sqlite")
 engine = create_engine(
-    os.environ.get("DATABASE_URL") or "sqlite:///" + databese_file,
+    os.environ.get("DATABASE_URL"),
+    # "sqlite:///" + databese_file,
     convert_unicode=True,
     echo=False,
 )
