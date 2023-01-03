@@ -11,7 +11,8 @@ database_url = os.environ.get("DATABASE_URL2")
 #     database_url = 'postgresql://' + database_url.split(sep='://')[1]
 
 engine = create_engine(
-    database_url or ("sqlite:///" + databese_file),
+    database_url,
+    # "sqlite:///" + databese_file,
     convert_unicode=True,
     echo=False,
 )
