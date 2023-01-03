@@ -1,5 +1,3 @@
-from datetime import date, datetime
-
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -9,6 +7,7 @@ from requests.exceptions import RequestException
 
 from models.database import db_session
 from models.models import News
+from utils import jp_time_now, jp_today
 
 URL = {
     "yahoo": "https://news.yahoo.co.jp/ranking/access/news/domestic",
@@ -28,7 +27,6 @@ class Scraper:
     def __init__(self) -> None:
         self.media = ""
         self.url = ""
-        self.file_name = ""
         self.df_news = pd.DataFrame()
 
     def fetch_news(self) -> None:
@@ -79,7 +77,7 @@ class Scraper:
                 row.title = _df['title']
                 row.url = _df['url']
                 row.words = _df['words']
-                row.timestamp = datetime.now()
+                row.timestamp = jp_time_now()
             else:
                 # Create row
                 row = News(
@@ -99,7 +97,6 @@ class YahooScraper(Scraper):
         super().__init__()
         self.media = "yahoo"
         self.url = URL[self.media]
-        self.file_name = f"{self.media}_{date.today().strftime('%Y%m%d')}.csv"
 
     def _parse_html(self, text: str) -> None:
         soup = BeautifulSoup(text, "html.parser")
@@ -113,7 +110,7 @@ class YahooScraper(Scraper):
             _url = item.attrs["href"]
             item_dict = {
                 "media": self.media,
-                "date": date.today(),
+                "date": jp_today(),
                 "ranking": i,
                 "title": _title,
                 "url": _url,
@@ -127,7 +124,6 @@ class GooScraper(Scraper):
         super().__init__()
         self.media = "goo"
         self.url = URL[self.media]
-        self.file_name = f"{self.media}_{date.today().strftime('%Y%m%d')}.csv"
 
     def _parse_html(self, text: str) -> None:
         soup = BeautifulSoup(text, "html.parser")
@@ -141,7 +137,7 @@ class GooScraper(Scraper):
             _url = "https://news.goo.ne.jp" + item.attrs["href"]
             item_dict = {
                 "media": self.media,
-                "date": date.today(),
+                "date": jp_today(),
                 "ranking": i,
                 "title": _title,
                 "url": _url,
@@ -155,7 +151,6 @@ class DmenuScraper(Scraper):
         super().__init__()
         self.media = "dmenu"
         self.url = URL[self.media]
-        self.file_name = f"{self.media}_{date.today().strftime('%Y%m%d')}.csv"
 
     def _parse_html(self, text: str) -> None:
         soup = BeautifulSoup(text, "html.parser")
@@ -169,7 +164,7 @@ class DmenuScraper(Scraper):
             _url = "https://topics.smt.docomo.ne.jp" + item.attrs["href"]
             item_dict = {
                 "media": self.media,
-                "date": date.today(),
+                "date": jp_today(),
                 "ranking": i,
                 "title": _title,
                 "url": _url,
@@ -183,7 +178,6 @@ class ExciteScraper(Scraper):
         super().__init__()
         self.media = "excite"
         self.url = URL[self.media]
-        self.file_name = f"{self.media}_{date.today().strftime('%Y%m%d')}.csv"
 
     def _parse_html(self, text: str) -> None:
         soup = BeautifulSoup(text, "html.parser")
@@ -195,7 +189,7 @@ class ExciteScraper(Scraper):
             _url = item.attrs["href"]
             item_dict = {
                 "media": self.media,
-                "date": date.today(),
+                "date": jp_today(),
                 "ranking": i,
                 "title": _title,
                 "url": _url,
@@ -209,7 +203,6 @@ class NikkeiScraper(Scraper):
         super().__init__()
         self.media = "nikkei"
         self.url = URL[self.media]
-        self.file_name = f"{self.media}_{date.today().strftime('%Y%m%d')}.csv"
 
     def _parse_html(self, text: str) -> None:
         soup = BeautifulSoup(text, "html.parser")
@@ -222,7 +215,7 @@ class NikkeiScraper(Scraper):
             _url = "https://www.nikkei.com" + item.attrs["href"]
             item_dict = {
                 "media": self.media,
-                "date": date.today(),
+                "date": jp_today(),
                 "ranking": i,
                 "title": _title,
                 "url": _url,
@@ -236,7 +229,6 @@ class JijiScraper(Scraper):
         super().__init__()
         self.media = "jiji"
         self.url = URL[self.media]
-        self.file_name = f"{self.media}_{date.today().strftime('%Y%m%d')}.csv"
 
     def _parse_html(self, text: str) -> None:
         soup = BeautifulSoup(text, "html.parser")
@@ -255,7 +247,7 @@ class JijiScraper(Scraper):
             _url = item.attrs["href"]
             item_dict = {
                 "media": self.media,
-                "date": date.today(),
+                "date": jp_today(),
                 "ranking": i,
                 "title": _title,
                 "url": _url,
@@ -269,7 +261,6 @@ class MainichiScraper(Scraper):
         super().__init__()
         self.media = "mainichi"
         self.url = URL[self.media]
-        self.file_name = f"{self.media}_{date.today().strftime('%Y%m%d')}.csv"
 
     def _parse_html(self, text: str) -> None:
         soup = BeautifulSoup(text, "html.parser")
@@ -281,7 +272,7 @@ class MainichiScraper(Scraper):
             _url = item.attrs["href"]
             item_dict = {
                 "media": self.media,
-                "date": date.today(),
+                "date": jp_today(),
                 "ranking": i,
                 "title": _title,
                 "url": _url,
@@ -292,7 +283,7 @@ class MainichiScraper(Scraper):
 
 def main():
     print("------------------------------------")
-    print(f"Crawl at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Crawl at {jp_time_now().strftime('%Y-%m-%d %H:%M:%S')}")
     YahooScraper().fetch_news()
     print("Fetched Yahoo")
     GooScraper().fetch_news()

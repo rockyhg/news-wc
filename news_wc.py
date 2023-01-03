@@ -1,6 +1,6 @@
 import base64
 import random
-from datetime import date, datetime
+from datetime import datetime
 from io import BytesIO
 
 import numpy as np
@@ -10,6 +10,7 @@ from wordcloud import WordCloud
 
 from models.database import db_session
 from models.models import News
+from utils import jp_today
 
 NEWS_DIR = "./models/news"
 FONT_PATH = "./static/fonts/NotoSansJP-Bold.otf"
@@ -94,7 +95,7 @@ def get_words_from_db(date_str: str = None) -> str:
     date_str: str
         ニュースの日付 (YYYY-MM-DD)"""
     if not date_str:
-        news_date = date.today()
+        news_date = jp_today()
     else:
         news_date = datetime.strptime(date_str, "%Y-%m-%d").date()
     news_data = db_session.query(News).filter_by(date=news_date).all()

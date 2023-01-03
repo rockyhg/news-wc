@@ -4,6 +4,7 @@ from datetime import datetime as dt
 from sqlalchemy import Column, Date, DateTime, Integer, String, Text
 
 from models.database import Base
+from utils import jp_time_now
 
 
 class News(Base):
@@ -17,7 +18,7 @@ class News(Base):
     title = Column(Text, unique=False)
     url = Column(String(256), unique=False)
     words = Column(Text, unique=False)
-    timestamp = Column(DateTime, default=dt.now())
+    timestamp = Column(DateTime, default=jp_time_now())
 
     def __init__(
         self,

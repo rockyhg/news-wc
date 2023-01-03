@@ -9,8 +9,8 @@ DATABASE_URL = "postgresql://nfgauqauvwafae:cddeab18de5706a0bd700dad56c59a5f81c7
 
 databese_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), "news.sqlite")
 engine = create_engine(
-    DATABASE_URL,
-    # "sqlite:///" + databese_file,
+    # DATABASE_URL,
+    "sqlite:///" + databese_file,
     convert_unicode=True,
     echo=False,
 )

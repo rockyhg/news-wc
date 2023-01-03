@@ -1,5 +1,6 @@
 __pycache__/
 /.venv
-*.ipynb
-.DS_Store
 /.vscode
+/test
+.DS_Store
+*.ipynb
