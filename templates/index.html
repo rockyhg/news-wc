@@ -18,7 +18,7 @@
 
 <body>
     <header class="container-fuluid">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-secondary mb-3">
             <div class="container">
                 <a class="navbar-brand" href="#">
                     <img src="../static/images/cloud_icon_white.svg" alt="" width="24" height="24">
@@ -29,7 +29,7 @@
     </header>
 
     <main>
-        <div class="container d-flex align-items-center flex-column">
+        <div class="container-sm d-flex align-items-center flex-column">
             <div class="text-center">
                 <h1 class="mb-3">今日のニュースを分析</h1>
                 <p class="lead mb-4">
@@ -38,11 +38,11 @@
             </div>
             <div class="mx-auto">
                 <!-- <img src="../static/images/today_wc.png" alt="今日のワードクラウド"> -->
-                <img src="{{ todays_wc }}" alt="今日のワードクラウド">
+                <img src="{{ todays_wc }}" class="img-fluid" alt="今日のワードクラウド">
             </div>
             <div class="my-3">
                 <form action="/" method="GET">
-                    <button class="btn btn-md btn-primary" type="submit">更新</button>
+                    <button class="btn btn-md btn-warning" type="submit">Update</button>
                 </form>
             </div>
             <!-- ------------------------------------------------------------ -->
@@ -53,15 +53,26 @@
             </div>
             <div class="list-group">
                 {% for item in news_list %}
-                <a href="{{ item.url }}" class="list-group-item list-group-item-action" target="_blank">【{{ item.word }}】{{ item.title }}</a>
+                <a href="{{ item.url }}" class="list-group-item list-group-item-action" target="_blank">
+                    【{{ item.word }}】{{ item.title }}
+                </a>
                 {% endfor %}
             </div>
             <!-- ------------------------------------------------------------ -->
-            <div class="mt-5 text-center">
+            <div class="my-5 text-center">
                 <h2 class="mb-3">【チャレンジ】今日のニュースを生成</h2>
-                <p class="lead mb-4">
-                    （AIが生成した架空のニュースです）
+                <p class="mb-3 text-secondary">
+                    ランキング上位の単語を使用してフェイクニュースを生成します<br>
+                    使用する単語: {{ words_for_gen }}
                 </p>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item lead">{{ generated_text }}</li>
+                </ul>
+                <div class="my-3">
+                    <form action="/" method="GET">
+                        <button class="btn btn-md btn-warning" type="submit">Update</button>
+                    </form>
+                </div>
             </div>
             <!--
             <form action="/" method="POST">
@@ -86,7 +97,7 @@
         </div>
     </main>
 
-    <footer id="footer" class="footer text-center pt-3 bg-dark text-white">
+    <footer id="footer" class="footer text-center pt-3 bg-secondary text-white">
         <div class="container">
             <div class="row">
                 <div class="col">
