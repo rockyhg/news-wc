@@ -20,7 +20,8 @@ def generate_news_text(words: str) -> str:
 単語: {words}
 ニュース:'''
     response = openai.Completion.create(
-        engine='text-davinci-003',
+        # engine='text-davinci-003',
+        engine='text-curie-001',
         prompt=prompt,
         temperature=0.6,
         max_tokens=256,
