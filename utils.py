@@ -14,7 +14,7 @@ def jp_today():
 
 def generate_news_text(words: str) -> str:
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    prompt = f"単語: {words}\nニュース:"
+    prompt = f"単語: {words}\nポジティブなニュース:"
     response = openai.Completion.create(
         engine='text-davinci-003',
         # engine="text-curie-001",
